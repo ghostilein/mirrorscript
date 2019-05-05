@@ -1,0 +1,37 @@
+#!/bin/bash
+ 
+# sourcehost: choose a mirror in your proximity!
+HOST=security.debian.org;
+ 
+# destination directory
+DEST=/mnt/disk/volume1/myweb/mirror/debian-security
+ 
+# Debian version(s) to mirror
+DIST=stretch/updates,buster/updates
+ 
+# architecture
+ARCH=amd64,i386
+ 
+# log timestamp
+logger -t mirror[$$] updating Debian-Security mirror
+ 
+su mirror -c \
+ "debmirror ${DEST} \
+ --nosource \
+ --getcontents \
+ --nocleanup \
+ --host=${HOST} \
+ --root=:debian-security/ \
+ --dist=${DIST} \
+ --section=main,contrib,non-free \
+ --arch=${ARCH} \
+ --method=rsync \
+ --i18n \
+ --include='/Translation-de.*' \
+ --include='/Translation-en.*' \
+ --exclude='/Translation-.*' \
+ --progress \
+ --rsync-options '-aIL --partial --bwlimit=400' >>/mnt/disk/volume1/logs/debmirror.log 2>&1"
+ 
+logger -t mirror[$$] finished updating Debian-Security mirror
+

@@ -1,0 +1,33 @@
+#!/bin/bash
+ 
+# sourcehost: choose a mirror in your proximity!
+HOST=debian.inf.tu-dresden.de;
+ 
+# destination directory
+DEST=/mnt/disk/volume1/myweb/mirror/lenny
+ 
+# Debian version(s) to mirror
+DIST=lenny
+ 
+# architecture
+ARCH=armel,amd64
+ 
+# log timestamp
+logger -t mirror[$$] updating Lenny mirror
+ 
+su mirror -c \
+ "debmirror ${DEST} \
+ --getcontents \
+ --allow-dist-rename \
+ --nosource \
+ --host=${HOST} \
+ --root=/debian-archive \
+ --dist=${DIST} \
+ --section=main,contrib,non-free,main/debian-installer \
+ --arch=${ARCH} \
+ --method=rsync \
+ --nocleanup \
+ --no-check-gpg \
+ --progress >>/mnt/disk/volume1/logs/debmirror.log 2>&1"
+  
+logger -t mirror[$$] finished updating Lenny mirror

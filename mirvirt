@@ -1,0 +1,31 @@
+#!/bin/bash
+ 
+# sourcehost: choose a mirror in your proximity!
+HOST=download.virtualbox.org;
+ 
+# destination directory
+DEST=/mnt/disk/volume1/myweb/mirror/virtualbox
+ 
+# Debian version(s) to mirror
+DIST=stretch,disco
+ 
+# architecture
+ARCH=amd64,i386
+ 
+# log timestamp
+logger -t mirror[$$] updating Virtualbox mirror
+ 
+su mirror -c \
+ "debmirror ${DEST} \
+ --nosource \
+ --host=${HOST} \
+ --root=/virtualbox/debian \
+ --dist=${DIST} \
+ --section=contrib,non-free \
+ --arch=${ARCH} \
+ --method=http \
+ --i18 \
+ --rsync-extra=none \
+ --progress \
+ --nocleanup >>/mnt/disk/volume1/logs/debmirror.log 2>&1"
+logger -t mirror[$$] finished updating Virtualbox mirror

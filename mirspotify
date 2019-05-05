@@ -1,0 +1,36 @@
+#!/bin/bash
+ 
+# sourcehost: choose a mirror in your proximity!
+HOST=repository.spotify.com;
+ 
+# destination directory
+DEST=/mnt/disk/volume1/myweb/mirror/spotify
+ 
+# Debian version(s) to mirror
+DIST=stable
+ 
+# architecture
+ARCH=amd64,i386
+ 
+# log timestamp
+logger -t mirror[$$] updating Spotify mirror
+ 
+su mirror -c \
+ "debmirror ${DEST} \
+ --getcontents \
+ --nosource \
+ --host=${HOST} \
+ --root=/ \
+ --dist=${DIST} \
+ --section=non-free \
+ --arch=${ARCH} \
+ --method=http \
+ --i18n \
+ --include='/Translation-de.*' \
+ --include='/Translation-en.*' \
+ --exclude='/Translation-.*' \
+ --rsync-options '-aIL --partial --bwlimit=1250' \
+ --progress \
+ --verbose \
+ --nocleanup >>/mnt/disk/volume1/logs/debmirror.log 2>&1"
+logger -t mirror[$$] finished updating Spotify mirror

@@ -1,0 +1,38 @@
+#!/bin/bash
+ 
+# sourcehost: choose a mirror in your proximity!
+HOST=ftp.halifax.rwth-aachen.de;
+ 
+# destination directory
+DEST=/mnt/disk/volume1/myweb/mirror/mxlinux/
+ 
+# Debian version(s) to mirror
+DIST=stretch
+ 
+# architecture
+ARCH=amd64,i386
+ 
+# log timestamp
+logger -t mirror[$$] updating MX-Linux mirror
+ 
+su mirror -c \
+ "debmirror ${DEST} \
+ --slow-cpu \
+ --getcontents \
+ --nosource \
+ --host=${HOST} \
+ --root=/mxlinux/packages/mx/repo/ \
+ --dist=${DIST} \
+ --section=main,non-free \
+ --arch=${ARCH} \
+ --method=rsync \
+ --i18n \
+ --include='/Translation-de.*' \
+ --include='/Translation-en.*' \
+ --exclude='/Translation-.*' \
+ --rsync-options '-aIL --partial --bwlimit=400' \
+ --nocleanup \
+ --diff=none \
+ --progress >>/mnt/disk/volume1/logs/debmirror.log 2>&1"
+logger -t mirror[$$] finished updating MX-Linux mirror
+
