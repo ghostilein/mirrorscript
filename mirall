@@ -1,6 +1,23 @@
 #!/bin/bash
+# Let's define some variables. You have to edit it for your environment.
+# DEBMLOG defines the path where your logfiles should be stored.
 DEBMLOG=/mnt/disk/volume1/logs/debmirror.log
+# MIRRORDIR defines the path where your mirror shall be stored.
 MIRRORDIR=/mnt/disk/volume1/myweb/mirror
+# HOSTDEB Debian Mirror used for mirroring.
+# Please look at https://www.debian.org/mirror/list-full for mirrors and their
+# offers. (eq. rsync,http,ftp...)
+# and their mirrored architectures (eq. i386,arm,amd64....)
+HOSTDEB=debian.inf.tu-dresden.de
+#DISTDEB Debian releases you want to mirror
+DISTDEB=stretch,buster,sid,stretch-updates,buster-updates
+#ARCH Select the architectures you want to mirror eq. amd64,arm,i386,sparc,.....
+ARCH=amd64,i386
+# We need a user for running debmirror as non root. Please add this user 
+# and give him a homedirectory. The homedirectory should be the same as
+# the MIRRORDIR. You later need it for adding gpg signatures.If you 
+# want a working mirror 
+USER=mirror
 
 if test -s $DEBMLOG
 then
