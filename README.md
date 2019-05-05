@@ -1,0 +1,2 @@
+# mirrorscript
+working with debmirror
