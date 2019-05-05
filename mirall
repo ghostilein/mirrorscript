@@ -1,9 +1,6 @@
 #!/bin/bash
 DEBMLOG=/mnt/disk/volume1/logs/debmirror.log
 MIRRORDIR=/mnt/disk/volume1/myweb/mirror
-#SECSIZE=$(du -hs $MIRRORDIR/debian-security)
-#MINTSIZE=$(du -hs $MIRRORDIR/mint)
-#LENNYSIZE=$(du -hs $MIRRORDIR/lenny)
 
 if test -s $DEBMLOG
 then
