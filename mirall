@@ -1,70 +1,124 @@
 #!/bin/bash
-# Let's define some variables. You have to edit it for your environment.
-# DEBMLOG defines the path where your logfiles should be stored.
-DEBMLOG=/mnt/disk/volume1/logs/debmirror.log
-# MIRRORDIR defines the path where your mirror shall be stored.
-MIRRORDIR=/mnt/disk/volume1/myweb/mirror
-# HOSTDEB Debian Mirror used for mirroring.
-# Please look at https://www.debian.org/mirror/list-full for mirrors and their
-# offers. (eq. rsync,http,ftp...)
-# and their mirrored architectures (eq. i386,arm,amd64....)
-HOSTDEB=debian.inf.tu-dresden.de
-#DISTDEB Debian releases you want to mirror
-DISTDEB=stretch,buster,sid,stretch-updates,buster-updates
-#ARCH Select the architectures you want to mirror eq. amd64,arm,i386,sparc,.....
-ARCH=amd64,i386
-# We need a user for running debmirror as non root. Please add this user 
+PROGNAME=Mirrorscript by Lars Horst
+VER='0.0.1'
+_temp="/tmp/answer.test"
+>$_temp
+
+# First we have to look if there's a configfile present
+MIRCONF=debmirror.conf
+if [ -f $MIRCONF ]; then
+	dialog --backtitle "$PROGNAME $VER" \
+	--yesno "Do you want to use your old config" 0 0
+	answer=$?
+	else
+	touch debmirror.conf
+fi 
+if [ $answer = 1 ]; then
+	dialog --backtitle "$PROGNAME $VER" \
+	--yesno "Are you sure to clear the configuration-file?" 0 0
+	answer2=$?
+fi	
+if [ $answer2 = 0 ]; then
+	rm $MIRCONF
+fi	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#echo "First let's look if all requirements are meet"
+#DEBMIRROR=`type -p debmirror`
+#if [ ! -f "$DEBMIRROR" ]; then
+#	echo"--error Debmirror missing,please install it (eg. sudo apt install debmirror)"
+#	exit 0
+#fi
+#echo "Debmirror ok!"
+#GNUPG=`type -p gpg`
+#if [ ! -f "$GNUPG" ]; then
+#	echo"--error GnuPG missing, please install it (eg. sudo apt install gnupg)"
+#	exit 0
+#fi
+#echo "GnuPG ok!"
+#
+#read -p "Where do you want to store the configfile?"$CONFIG
+#touch $CONFIG/mirconf
+#
+## Let's define some variables. You have to edit it for your environment.
+## DEBMLOG defines the path where your logfiles should be stored.
+#DEBMLOG=/mnt/disk/volume1/logs/debmirror.log
+## MIRRORDIR defines the path where your mirror shall be stored.
+#MIRRORDIR=/mnt/disk/volume1/myweb/mirror
+## HOSTDEB Debian Mirror used for mirroring.
+## Please look at https://www.debian.org/mirror/list-full for mirrors and their
+## offers. (eq. rsync,http,ftp...)
+## and their mirrored architectures (eq. i386,arm,amd64....)
+#HOSTDEB=debian.inf.tu-dresden.de
+##DISTDEB Debian releases you want to mirror
+#DISTDEB=stretch,buster,sid,stretch-updates,buster-updates
+##ARCH Select the architectures you want to mirror eq. amd64,arm,i386,sparc,.....
+#ARCH=amd64,i386
+# #We need a user for running debmirror as non root. Please add this user 
 # and give him a homedirectory. The homedirectory should be the same as
 # the MIRRORDIR. You later need it for adding gpg signatures.If you 
 # want a working mirror 
-USER=mirror
+#USER=mirror
 
-if test -s $DEBMLOG
-then
-test -f $DEBMLOG.3.xz && mv $DEBMLOG.3.xz $DEBMLOG.4.xz
-test -f $DEBMLOG.2.xz && mv $DEBMLOG.2.xz $DEBMLOG.3.xz
-test -f $DEBMLOG.1.xz && mv $DEBMLOG.1.xz $DEBMLOG.2.xz
-test -f $DEBMLOG.0 && mv $DEBMLOG.0 $DEBMLOG.1 && xz $DEBMLOG.1
-mv $DEBMLOG $DEBMLOG.0
-cp /dev/null $DEBMLOG
-chmod 666 $DEBMLOG
-fi
+#if test -s $DEBMLOG
+#then
+#test -f $DEBMLOG.3.xz && mv $DEBMLOG.3.xz $DEBMLOG.4.xz
+#test -f $DEBMLOG.2.xz && mv $DEBMLOG.2.xz $DEBMLOG.3.xz
+#test -f $DEBMLOG.1.xz && mv $DEBMLOG.1.xz $DEBMLOG.2.xz
+#test -f $DEBMLOG.0 && mv $DEBMLOG.0 $DEBMLOG.1 && xz $DEBMLOG.1
+#mv $DEBMLOG $DEBMLOG.0
+#cp /dev/null $DEBMLOG
+#chmod 666 $DEBMLOG
+#fi
 
-echo "!!!!!!!!!UPDATE ALLER MIRRORS!!!!!!!!!!" 2>&1 | tee -a $DEBMLOG
-echo "---------------------------------------" 2>&1 | tee -a $DEBMLOG
-echo "######### 1. Debian Security ##########" 2>&1 | tee -a $DEBMLOG
-date 2>&1 | tee -a $DEBMLOG
-/etc/mirupdates
-echo "######### 2. Linux Mint ###############" 2>&1 | tee -a $DEBMLOG
-date 2>&1 | tee -a $DEBMLOG
-/etc/mirmint
-echo "######### 3. Debian Lenny #############" 2>&1 | tee -a $DEBMLOG 
-date 2>&1 | tee -a $DEBMLOG
-/etc/mirror
-echo "######### 4. VirtualBox ###############" 2>&1 | tee -a $DEBMLOG 
-date 2>&1 | tee -a $DEBMLOG
-/etc/mirvirt
-echo "######### 5. Spotify ##################" 2>&1 | tee -a $DEBMLOG 
-date 2>&1 | tee -a $DEBMLOG
-/etc/mirspotify
-echo "######### 6. MXLinux ##################" 2>&1 | tee -a $DEBMLOG 
-date 2>&1 | tee -a $DEBMLOG
-/etc/mirmx
-echo "######### 7. AntiX ####################" 2>&1 | tee -a $DEBMLOG
-date 2>&1 | tee -a $DEBMLOG
-/etc/mirantix
-echo "######### 8. Debian ###################" 2>&1 | tee -a $DEBMLOG
-date 2>&1 | tee -a $DEBMLOG
-/etc/mirstretch
-echo "######### 9. UBUNTU ###################" 2>&1 | tee -a $DEBMLOG
-date 2>&1 | tee -a $DEBMLOG
-/etc/mirdisco
-echo "######## Calculate MIRROR SIZE ########" 2>&1 | tee -a $DEBMLOG
-MIRSIZE=$(du -hs $MIRRORDIR)
-NOW=$(date)
-echo "$MIRSIZE" 2>&1 | tee -a $DEBMLOG
-echo "Run: $NOW" 2>&1 | tee -a $DEBMLOG
-echo "!!!!!!!!!!END MIRROR UPDATE!!!!!!!!!!!!" 2>&1 | tee -a $DEBMLOG
-echo "#######################################" 2>&1 | tee -a $DEBMLOG
-/etc/init.d/noflushd stop
-noflushd -n 20 /dev/sda /dev/sdb
+#echo "!!!!!!!!!UPDATE ALLER MIRRORS!!!!!!!!!!" 2>&1 | tee -a $DEBMLOG
+#echo "---------------------------------------" 2>&1 | tee -a $DEBMLOG
+#echo "######### 1. Debian Security ##########" 2>&1 | tee -a $DEBMLOG
+#date 2>&1 | tee -a $DEBMLOG
+#/etc/mirupdates
+#echo "######### 2. Linux Mint ###############" 2>&1 | tee -a $DEBMLOG
+#date 2>&1 | tee -a $DEBMLOG
+#/etc/mirmint
+#echo "######### 3. Debian Lenny #############" 2>&1 | tee -a $DEBMLOG 
+#date 2>&1 | tee -a $DEBMLOG
+#/etc/mirror
+#echo "######### 4. VirtualBox ###############" 2>&1 | tee -a $DEBMLOG 
+#date 2>&1 | tee -a $DEBMLOG
+#/etc/mirvirt
+#echo "######### 5. Spotify ##################" 2>&1 | tee -a $DEBMLOG 
+#date 2>&1 | tee -a $DEBMLOG
+#/etc/mirspotify
+#echo "######### 6. MXLinux ##################" 2>&1 | tee -a $DEBMLOG 
+#date 2>&1 | tee -a $DEBMLOG
+#/etc/mirmx
+#echo "######### 7. AntiX ####################" 2>&1 | tee -a $DEBMLOG
+#date 2>&1 | tee -a $DEBMLOG
+#/etc/mirantix
+#echo "######### 8. Debian ###################" 2>&1 | tee -a $DEBMLOG
+#date 2>&1 | tee -a $DEBMLOG
+#/etc/mirstretch
+#echo "######### 9. UBUNTU ###################" 2>&1 | tee -a $DEBMLOG
+#date 2>&1 | tee -a $DEBMLOG
+#/etc/mirdisco
+#echo "######## Calculate MIRROR SIZE ########" 2>&1 | tee -a $DEBMLOG
+#MIRSIZE=$(du -hs $MIRRORDIR)
+#NOW=$(date)
+#echo "$MIRSIZE" 2>&1 | tee -a $DEBMLOG
+#echo "Run: $NOW" 2>&1 | tee -a $DEBMLOG
+#echo "!!!!!!!!!!END MIRROR UPDATE!!!!!!!!!!!!" 2>&1 | tee -a $DEBMLOG
+#echo "#######################################" 2>&1 | tee -a $DEBMLOG
+#/etc/init.d/noflushd stop
+#noflushd -n 20 /dev/sda /dev/sdb
