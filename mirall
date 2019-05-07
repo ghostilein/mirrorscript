@@ -1,27 +1,57 @@
 #!/bin/bash
-PROGNAME=Mirrorscript by Lars Horst
+PROGNAME="Mirrorscript by Lars Horst"
 VER='0.0.1'
 _temp="/tmp/answer.test"
 >$_temp
 
-# First we have to look if there's a configfile present
+# We have to look if there's a configfile present
 MIRCONF=debmirror.conf
-if [ -f $MIRCONF ]; then
-	dialog --backtitle "$PROGNAME $VER" \
-	--yesno "Do you want to use your old config" 0 0
-	answer=$?
-	else
-	touch debmirror.conf
-fi 
-if [ $answer = 1 ]; then
-	dialog --backtitle "$PROGNAME $VER" \
-	--yesno "Are you sure to clear the configuration-file?" 0 0
-	answer2=$?
-fi	
-if [ $answer2 = 0 ]; then
-	rm $MIRCONF
-fi	
 
+configask () {
+	if [ -f $MIRCONF ]; then
+		dialog --backtitle "$PROGNAME $VER" \
+		--yesno "Do you want to use your old config" 0 0
+		answer=$?
+		else
+		touch debmirror.conf
+	fi 
+
+
+	if [ $answer = 1 ]; then
+		dialog --backtitle "$PROGNAME $VER" \
+		--yesno "Are you sure to clear the configuration-file?" 0 0
+		answer2=$?
+
+	fi
+}	
+debname () {
+		dialog --backtitle "$PROGNAME $VER" \
+		--checklist "Which Version do you want to mirror" 0 0 0 \
+		Stretch "stable" off \
+		Buster "testing" off \
+		Jessie "oldstable" off \
+		Sid "unstable" off 2>$_temp
+		debversion=`cat $_temp`	
+		echo "du hast $debversion gewahlt"
+}
+					
+configbuild () {
+		dialog --backtitle "$PROGNAME $VER" \
+		--checklist "Which Distribution do you want to mirror?" 0 0 0 \
+		Debian "http://www.debian.org" on \
+		Ubuntu "http://www.ubuntu.com" off \
+		Antix "http://antixlinux.com" off \
+		MXlinux "http://mxlinux.org" off \
+		LMDE "http://linuxmint.com" off 2>$_temp
+		distro=`cat $_temp`
+		if [[ $distro == *"Debian"* ]]; then
+			debname
+		fi
+}
+	
+configbuild
+
+# Let's ask some question, what the user want to do
 
 
 
