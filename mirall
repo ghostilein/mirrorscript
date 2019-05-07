@@ -26,13 +26,40 @@ configask () {
 }	
 debname () {
 		dialog --backtitle "$PROGNAME $VER" \
+		--title "Debian" \
 		--checklist "Which Version do you want to mirror" 0 0 0 \
 		Stretch "stable" off \
 		Buster "testing" off \
 		Jessie "oldstable" off \
 		Sid "unstable" off 2>$_temp
-		debversion=`cat $_temp`	
-		echo "du hast $debversion gewahlt"
+		sed -i s'#"##g ; s# #,#g ; s/\([A-Z]\)/\L\1/g' $_temp
+		debversion=`cat $_temp`
+		#>$MIRCONF
+		#echo "#!/bin/bash">$MIRCONF
+		#echo "DIST=$debversion">>$MIRCONF
+	
+		dialog --colors --backtitle "$PROGNAME $VER" \
+		 --title "\Zb\Zu\Z1Debian" \
+		--checklist "Which architecture do you want to mirror?" 0 0 0 \
+		amd64 "\Zb\Zu64-bit AMD/INTEL Processoren *" on \
+		arm64 "64-bit ARM CPU" off \
+		armel "older 32-bit ARM CPUs" off \
+		armhf "older 32-bit ARM CPU with FPU" off \
+		hurd-i386 "for MACH Micro Kernel" off \
+		i386 "\Zb\Zu32-bit AMD/INTEL Processor *" off \
+		ia64 "64-bit Itanium Processor" off \
+		kfreebsd-amd64 "64-bit based Kfreebsd-kernel" off \
+		kfreebsd-i386 "32-bit based Kfreebsd-kernel" off \
+		mips "32-bit big endian CPU" off \
+		mips64el "64-bit litte endian CPU" off \
+		mipsel "32-bit little endian CPU" off \
+  		powerpc "Motorola RISC Processor" off \
+		ppc64el "IBM PowerPC CPU" off \
+		s390 "IBM Enterprise CPU" off \
+		s390x "IBM Enterprise CPU" off \
+		sparc "Sparc Microprocessor" off 2>$_temp
+		sed -i s'#"##g ; s# #,#g' $_temp
+		arch=`cat $_temp`
 }
 					
 configbuild () {
