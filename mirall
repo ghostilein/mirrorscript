@@ -26,11 +26,20 @@ configask () {
 }	
 debname () {
 		dialog --backtitle "$PROGNAME $VER" \
-		--title "Debian" \
-		--checklist "Which Version do you want to mirror" 0 0 0 \
-		Stretch "stable" off \
-		Buster "testing" off \
-		Jessie "oldstable" off \
+		--colors --title "\Zb\ZuDEBIAN" \
+		--checklist "What do you want to mirror" 0 0 0 \
+		stretch "Stable release" on \
+		stretch-updates "Stable release updates" off \
+		stretch-backports "Stable release backports" off \
+		stretch-proposed-updates "Stable release proposed-updates" off \
+		buster "Testing release" off \
+		buster-updates "Testing release updates" off \
+		buster-backports "Testing release backports" off \
+		buster-proposed-updates "Testing release proposed-updates" off \
+		jessie "Oldstable -LTS-" off \
+		jessie-updates "Oldstable -LTS- updates" off \
+		jessie-backports "Oldstable -LTS- backports" off \
+		jessie-proposed-updates "Oldstable -LTS- proposed-updates" off \
 		Sid "unstable" off 2>$_temp
 		sed -i s'#"##g ; s# #,#g ; s/\([A-Z]\)/\L\1/g' $_temp
 		debversion=`cat $_temp`
@@ -39,7 +48,7 @@ debname () {
 		#echo "DIST=$debversion">>$MIRCONF
 	
 		dialog --colors --backtitle "$PROGNAME $VER" \
-		 --title "\Zb\Zu\Z1Debian" \
+		 --title "\Zb\Zu\Z1DEBIAN" \
 		--checklist "Which architecture do you want to mirror?" 0 0 0 \
 		amd64 "\Zb\Zu64-bit AMD/INTEL Processoren *" on \
 		arm64 "64-bit ARM CPU" off \
